@@ -140,14 +140,14 @@ func main() {
 		return
 	}
 
-	clientChannelContext := sdk.ChannelContext("mychannel", fabsdk.WithUser("admin"), fabsdk.WithOrg("Org1MSP"))
+	clientChannelContext := sdk.ChannelContext("mychannel", fabsdk.WithUser("admin"), fabsdk.WithOrg("Org1"))
 	client, err = channel.New(clientChannelContext)
 	if err != nil {
 		fmt.Println("create channel failed", err)
 		return
 	}
 
-	loadOrgPeers(sdk.Context(fabsdk.WithUser("admin"), fabsdk.WithOrg("Org1MSP")))
+	loadOrgPeers(sdk.Context(fabsdk.WithUser("admin"), fabsdk.WithOrg("Org1")))
 
 	//file := "./" + time.Now().Format("2006-01-02-15:04:05") + ".log"
 	//logFile, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0766)
@@ -168,7 +168,7 @@ func loadOrgPeers(ctxProvider contextAPI.ClientProvider) {
 		return
 	}
 
-	JYWYPeers, joined := ctx.EndpointConfig().PeersConfig("Org1MSP")
+	JYWYPeers, joined := ctx.EndpointConfig().PeersConfig("Org1")
 	if joined != true {
 		fmt.Println("make endpoint target failed", err)
 
