@@ -1,0 +1,170 @@
+#
+# Copyright SecureKey Technologies Inc. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+
+#
+# Schema version of the content. Used by the SDK to apply the corresponding parsing rules.
+#
+version: 1.0.0
+
+# server 所用到配置部分设置
+server:
+  restful:
+    listenAddress: :8888
+
+client:
+  organization: org1
+
+  logging:
+    level: info
+  eventService:
+    type: deliver
+  cryptoconfig:
+    path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/channel/crypto-config/
+  credentialStore:
+    path: "/tmp/state-store"
+    cryptoStore:
+      path: /tmp/msp
+  BCCSP:
+    security:
+     enabled: true
+     default:
+      provider: "SW"
+     hashAlgorithm: "SHA2"
+     softVerify: true
+     level: 256
+
+  tlsCerts:
+    systemCertPool: true
+
+    client:
+      key:
+        path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/channel/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/tls/server.key
+      cert:
+        path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/channel/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/tls/server.crt
+
+channels:
+  mychannel:
+    peers:
+      peer0.org1.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+    policies:
+      queryChannelConfig:
+        minResponses: 1
+        maxTargets: 1
+        retryOpts:
+          attempts: 5
+          initialBackoff: 500ms
+          maxBackoff: 5s
+          backoffFactor: 2.0
+organizations:
+  org1:
+    mspid: Org1MSP
+    cryptoPath:  peerOrganizations/org1.example.com/users/User1@org1.example.com/msp
+
+    peers:
+      - peer0.org1.example.com
+    certificateAuthorities:
+      - ca.org1.example.com
+  org2:
+    mspid: Org2MSP
+    cryptoPath:  peerOrganizations/org2.example.com/users/User1@org2.example.com/msp
+
+    peers:
+      - peer0.org2.example.com
+
+    certificateAuthorities:
+      - ca.org2.example.com
+
+  ordererorg:
+      mspID: "OrdererOrg"
+
+      cryptoPath: ordererOrganizations/example.com/users/{username}@example.com/msp
+
+orderers:
+  orderer.example.com:
+    url: orderer.example.com:7050
+    grpcOptions:
+      ssl-target-name-override: orderer.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+
+    tlsCACerts:
+      path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/channel/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
+
+peers:
+  peer0.org1.example.com:
+    url: 10.0.90.151:7051
+    eventUrl: 10.0.90.151:7053
+
+    grpcOptions:
+      ssl-target-name-override: peer0.org1.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+
+    tlsCACerts:
+      path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/channel/crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem
+
+  peer0.org2.example.com:
+    url: 10.0.90.151:8051
+    eventUrl: 10.0.90.151:8053
+    grpcOptions:
+      ssl-target-name-override: peer0.org2.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+
+    tlsCACerts:
+      path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/channel/crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem
+
+certificateAuthorities:
+  ca.org1.example.com:
+    url: https://10.0.90.151:7054
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/ca_root.pem
+      # Client key and cert for SSL handshake with Fabric CA
+      client:
+        key:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client-key.pem
+        cert:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client.pem
+
+    # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
+    # needed to enroll and invoke new users.
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca.org1.example.com
+  ca.org2.example.com:
+    url: https://10.0.90.151:8054
+    tlsCACerts:
+      # Comma-Separated list of paths
+      path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/ca_root.pem
+      # Client key and cert for SSL handshake with Fabric CA
+      client:
+        key:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client-key.pem
+        cert:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client.pem
+
+     # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
+     # needed to enroll and invoke new users.
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca.org2.example.com

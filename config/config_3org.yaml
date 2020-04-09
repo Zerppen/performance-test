@@ -1,0 +1,282 @@
+#
+# Copyright SecureKey Technologies Inc. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+
+#
+# Schema version of the content. Used by the SDK to apply the corresponding parsing rules.
+#
+version: 1.0.0
+
+# server 所用到配置部分设置
+server:
+  restful:
+    listenAddress: :8888
+
+client:
+  organization: YH
+
+  logging:
+    level: info
+  eventService:
+    type: deliver
+  cryptoconfig:
+    path: ${GOPATH}/src/yonghui.cn/yuhang/performance_test/config
+  credentialStore:
+    path: "/tmp/state-store"
+    cryptoStore:
+      path: /tmp/msp
+  BCCSP:
+    security:
+     enabled: true
+     default:
+      provider: "SW"
+     hashAlgorithm: "SHA2"
+     softVerify: true
+     level: 256
+
+  tlsCerts:
+    systemCertPool: true
+
+    client:
+      key:
+#        path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/yh.trace.cn/users/User1@yh.trace.cn/tls/client.key
+        path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/config/mutual_tls/client_sdk_go-key.pem
+#         path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go-key.pem
+      cert:
+#        path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/yh.trace.cn/users/User1@yh.trace.cn/tls/client.crt
+        path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/config/mutual_tls/client_sdk_go.pem
+#         path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go.pem
+
+channels:
+  yhchannel:
+    peers:
+      peer0.yh.trace.cn:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+#      peer0.jywy.trace.com:
+#        endorsingPeer: true
+#        chaincodeQuery: true
+#        ledgerQuery: true
+#        eventSource: true
+
+#      peer0.zfjg.gov.cn:
+#        endorsingPeer: true
+#        chaincodeQuery: true
+#        ledgerQuery: true
+#        eventSource: true
+
+    policies:
+      queryChannelConfig:
+        minResponses: 1
+        maxTargets: 1
+        retryOpts:
+          attempts: 5
+          initialBackoff: 500ms
+          maxBackoff: 5s
+          backoffFactor: 2.0
+organizations:
+  JYWY:
+    mspid: JYWYMSP
+    cryptoPath:  peerOrganizations/jywy.trace.com/users/User1@jywy.trace.com/msp
+
+    peers:
+      - peer0.jywy.trace.com
+      - peer1.jywy.trace.com
+    certificateAuthorities:
+      - ca.jywy.trace.com
+  YH:
+    mspid: YHMSP
+    cryptoPath:  peerOrganizations/yh.trace.cn/users/User1@yh.trace.cn/msp
+
+    peers:
+      - peer0.yh.trace.cn
+      - peer1.yh.trace.cn
+    certificateAuthorities:
+      - ca.yh.trace.cn
+  ZFJG:
+      mspid: ZFJGMSP
+      cryptoPath:  peerOrganizations/zfjg.gov.cn/users/User1@zfjg.gov.cn/msp
+
+      peers:
+        - peer0.zfjg.gov.cn
+        - peer1.zfjg.gov.cn
+      certificateAuthorities:
+        - ca.zfjg.gov.cn
+
+  ordererorg:
+      mspID: "OrdererOrg"
+
+      cryptoPath: ordererOrganizations/example.com/users/{username}@example.com/msp
+
+orderers:
+  orderer.example.com:
+    url: orderer.example.com:7050
+    grpcOptions:
+      ssl-target-name-override: orderer.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+
+    tlsCACerts:
+      path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
+
+peers:
+  peer0.jywy.trace.com:
+    url: peer0.jywy.trace.com:7051
+    eventUrl: peer0.jywy.trace.com:7053
+
+    grpcOptions:
+      ssl-target-name-override: peer0.jywy.trace.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+
+    tlsCACerts:
+      path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/jywy.trace.com/tlsca/tlsca.jywy.trace.com-cert.pem
+
+  peer1.jywy.trace.com:
+      url: peer1.jywy.trace.com:8051
+      eventUrl: peer1.jywy.trace.com:8053
+
+      grpcOptions:
+        ssl-target-name-override: peer1.jywy.trace.com
+        keep-alive-time: 0s
+        keep-alive-timeout: 20s
+        keep-alive-permit: false
+        fail-fast: false
+        allow-insecure: false
+
+      tlsCACerts:
+        path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/jywy.trace.com/tlsca/tlsca.jywy.trace.com-cert.pem
+
+  peer0.yh.trace.cn:
+    url: peer0.yh.trace.cn:7051
+    eventUrl: peer0.yh.trace.cn:7053
+    grpcOptions:
+      ssl-target-name-override: peer0.yh.trace.cn
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+
+    tlsCACerts:
+      path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/yh.trace.cn/tlsca/tlsca.yh.trace.cn-cert.pem
+
+  peer1.yh.trace.cn:
+      url: peer1.yh.trace.cn:8051
+      eventUrl: peer1.yh.trace.cn:8053
+      grpcOptions:
+        ssl-target-name-override: peer1.yh.trace.cn
+        keep-alive-time: 0s
+        keep-alive-timeout: 20s
+        keep-alive-permit: false
+        fail-fast: false
+        allow-insecure: false
+
+      tlsCACerts:
+        path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/yh.trace.cn/tlsca/tlsca.yh.trace.cn-cert.pem
+
+  peer0.zfjg.gov.cn:
+      url: peer0.zfjg.gov.cn:7051
+      eventUrl: peer0.zfjg.gov.cn:7053
+      grpcOptions:
+        ssl-target-name-override: peer0.zfjg.gov.cn
+        keep-alive-time: 0s
+        keep-alive-timeout: 20s
+        keep-alive-permit: false
+        fail-fast: false
+        allow-insecure: false
+
+      tlsCACerts:
+            path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/zfjg.gov.cn/tlsca/tlsca.zfjg.gov.cn-cert.pem
+
+  peer1.zfjg.gov.cn:
+        url: peer1.zfjg.gov.cn:8051
+        eventUrl: peer1.zfjg.gov.cn:8053
+        grpcOptions:
+          ssl-target-name-override: peer1.zfjg.gov.cn
+          keep-alive-time: 0s
+          keep-alive-timeout: 20s
+          keep-alive-permit: false
+          fail-fast: false
+          allow-insecure: false
+
+        tlsCACerts:
+              path: ${GOPATH}/src/yonghui.cn/blockchain/turbot/fabric_cluster_configuration/3orgs/peerOrganizations/zfjg.gov.cn/tlsca/tlsca.zfjg.gov.cn-cert.pem
+
+certificateAuthorities:
+  ca.jywy.trace.com:
+    url: https://ca-jywy:7054
+    tlsCACerts:
+      path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/ca_root.pem
+#      path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/ca.crt
+      # Client key and cert for SSL handshake with Fabric CA
+      client:
+        key:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client-key.pem
+#           path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go-key.pem
+        cert:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client.pem
+#           path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go.pem
+
+    # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
+    # needed to enroll and invoke new users.
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca-jywy
+  ca.yh.trace.cn:
+    url: https://ca-yh:7054
+    tlsCACerts:
+      # Comma-Separated list of paths
+      path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/ca_root.pem
+#      path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/ca.crt
+      # Client key and cert for SSL handshake with Fabric CA
+      client:
+        key:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client-key.pem
+#          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go-key.pem
+        cert:
+          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client.pem
+#          path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go.pem
+
+     # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
+     # needed to enroll and invoke new users.
+    registrar:
+      enrollId: admin
+      enrollSecret: adminpw
+    # [Optional] The optional name of the CA.
+    caName: ca-yh
+  ca.zfjg.gov.cn:
+      url: https://ca-zfjg:7054
+      tlsCACerts:
+        # Comma-Separated list of paths
+        path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/ca_root.pem
+#        path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/ca.crt
+        # Client key and cert for SSL handshake with Fabric CA
+        client:
+          key:
+            path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client-key.pem
+#             path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go-key.pem
+          cert:
+            path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/test/fixtures/fabricca/tls/certs/client/client_fabric_client.pem
+#             path: ${GOPATH}/src/github.com/hyperledger/fabric-sdk-go/pkg/core/config/testdata/certs/client_sdk_go.pem
+
+       # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
+       # needed to enroll and invoke new users.
+      registrar:
+        enrollId: admin
+        enrollSecret: adminpw
+      # [Optional] The optional name of the CA.
+      caName: ca-zfjg
