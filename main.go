@@ -12,7 +12,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"yonghui.cn/yuhang/performance_test/common/config"
 )
 
 var router *gin.Engine
@@ -130,11 +129,11 @@ var (
 )
 
 func main() {
-	err := config.InitConfig(configPath)
+	err := InitConfig(configPath)
 	if err != nil {
 		fmt.Errorf("can't read configuration")
 	}
-	configProvider := fabcfg.FromFile(config.GetConfigFile())
+	configProvider := fabcfg.FromFile(GetConfigFile())
 	sdk, err := fabsdk.New(configProvider)
 	if err != nil {
 		fmt.Println("error to create fabsdk", err)
