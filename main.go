@@ -140,7 +140,7 @@ func main() {
 		return
 	}
 
-	clientChannelContext := sdk.ChannelContext("mychannel", fabsdk.WithUser("admin"), fabsdk.WithOrg("Org1"))
+	clientChannelContext := sdk.ChannelContext("mychannel", fabsdk.WithUser("Admin"), fabsdk.WithOrg("Org1"))
 	client, err = channel.New(clientChannelContext)
 	if err != nil {
 		fmt.Println("create channel failed", err)
